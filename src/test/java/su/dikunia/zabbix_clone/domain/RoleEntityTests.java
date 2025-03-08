@@ -7,17 +7,18 @@ import java.util.Set;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import su.dikunia.zabbix_clone.config.TestPropertyConfig;
 
 
-@TestPropertySource(properties = {
-    "spring.datasource.password=${SPRING_DATASOURCE_PASSWORD}"
-})
+@SpringBootTest
+@ContextConfiguration(classes = TestPropertyConfig.class)
 public class RoleEntityTests {
 
     private static Validator validator; 
