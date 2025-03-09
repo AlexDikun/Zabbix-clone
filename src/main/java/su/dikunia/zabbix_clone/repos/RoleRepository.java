@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import su.dikunia.zabbix_clone.domain.RoleEntity;
 
 public interface RoleRepository extends JpaRepository<RoleEntity, Long> {
-    Optional<RoleEntity> findByRoleName(String name);
+    Optional<RoleEntity> findByName(String name);
 }

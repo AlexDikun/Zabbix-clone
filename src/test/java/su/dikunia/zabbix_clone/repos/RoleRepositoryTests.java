@@ -31,8 +31,8 @@ public class RoleRepositoryTests {
         RoleEntity roleEntity = new RoleEntity();
         roleEntity.setName(roleName);
 
-        when(roleRepository.findByRoleName(roleName)).thenReturn(Optional.of(roleEntity));
-        Optional<RoleEntity> foundRole = roleRepository.findByRoleName(roleName);
+        when(roleRepository.findByName(roleName)).thenReturn(Optional.of(roleEntity));
+        Optional<RoleEntity> foundRole = roleRepository.findByName(roleName);
 
         assertTrue(foundRole.isPresent());
         assertEquals(roleName, foundRole.get().getName());
@@ -44,8 +44,8 @@ public class RoleRepositoryTests {
 
         String roleName = "ROLE_NON_EXISTENT";
 
-        when(roleRepository.findByRoleName(roleName)).thenReturn(Optional.empty());
-        Optional<RoleEntity> foundRole = roleRepository.findByRoleName(roleName);
+        when(roleRepository.findByName(roleName)).thenReturn(Optional.empty());
+        Optional<RoleEntity> foundRole = roleRepository.findByName(roleName);
 
         assertTrue(foundRole.isEmpty());
     }
