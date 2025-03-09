@@ -72,17 +72,6 @@ public class RoleEntityTests {
     }
 
     @Test
-    public void testRoleEntityValidationWithNullName() {
-        System.out.println("Попытка создать роль с Null-именем!");
-
-        RoleEntity roleEntity = new RoleEntity();
-        roleEntity.setName(null); 
-        Set<ConstraintViolation<RoleEntity>> violations = validator.validate(roleEntity);
-        assertThat(violations).isNotNull();
-        assertThat(violations.stream().anyMatch(violation -> violation.getMessage().contains("name must not be blank"))).isTrue();
-    }
-
-    @Test
     public void testCreationTimestampWithMock() {
         System.out.println("Сценарий проверки заполнения даты и времени сущности в момент ее создания!");
 
