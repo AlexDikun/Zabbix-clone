@@ -52,7 +52,7 @@ public class RoleEntityTests {
     }
 
     @Test
-    void testRoleValidation() {
+    void testRoleEntityValidation() {
         System.out.println("Создаем валидную роль!");
 
         RoleEntity roleEntity = new RoleEntity();
@@ -62,7 +62,7 @@ public class RoleEntityTests {
     }
 
     @Test
-    void testRoleValidationWithBlankName() {
+    void testRoleEntityValidationWithBlankName() {
         System.out.println("Попытка создать роль с пустым именем!");
 
         RoleEntity roleEntity = new RoleEntity();
@@ -73,7 +73,7 @@ public class RoleEntityTests {
     }
 
     @Test
-    public void testRoleValidationWithNullName() {
+    public void testRoleEntityValidationWithNullName() {
         System.out.println("Попытка создать роль с Null-именем!");
 
         RoleEntity roleEntity = new RoleEntity();
