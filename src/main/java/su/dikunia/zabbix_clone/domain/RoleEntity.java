@@ -25,6 +25,9 @@ public class RoleEntity {
     @NotBlank(message = "name must not be blank")
     private String name;
 
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
     public RoleEntity() {}
     
 }
