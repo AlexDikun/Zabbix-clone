@@ -2,6 +2,7 @@ package su.dikunia.zabbix_clone.domain;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
 
@@ -47,6 +48,17 @@ public class RoleEntityTests {
         roleEntity.setName(""); 
         Set<ConstraintViolation<RoleEntity>> violations = validator.validate(roleEntity);
         assertThat(violations).isNotEmpty();
+        assertThat(violations.stream().anyMatch(violation -> violation.getMessage().contains("name must not be blank"))).isTrue();
+    }
+
+    @Test
+    public void testRoleValidationWithNullName() {
+        System.out.println("Попытка создать роль с Null логином!");
+
+        RoleEntity roleEntity = new RoleEntity();
+        roleEntity.setName(null); 
+        Set<ConstraintViolation<RoleEntity>> violations = validator.validate(roleEntity);
+        assertThat(violations).isNotNull();
         assertThat(violations.stream().anyMatch(violation -> violation.getMessage().contains("name must not be blank"))).isTrue();
     }
 }
