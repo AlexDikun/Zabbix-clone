@@ -14,6 +14,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Entity
@@ -27,9 +29,12 @@ public class UserEntity {
     private Long id;
 
     @Column(name = "login", unique = true, nullable = false)
+    @NotBlank(message = "login must not be blank")
     private String login;
 
     @Column(name = "password", nullable = false)
+    @Size(min=5, message="size error")
+    @NotBlank(message = "password must not be blank")
     private String password;
 
     @CreationTimestamp
