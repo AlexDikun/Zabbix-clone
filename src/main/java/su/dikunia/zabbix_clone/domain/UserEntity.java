@@ -41,7 +41,7 @@ public class UserEntity {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = true)
     private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.EAGER)
