@@ -2,14 +2,9 @@ package su.dikunia.zabbix_clone.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
@@ -33,23 +28,15 @@ public class UserServiceIntegrationTest {
     @Autowired
     private RoleRepository roleRepository;
 
-    @Mock
+    @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     @Transactional
     public void testCreateUser() {
         String login = "testLogin";
         String password = "password";
-        String encodedPassword = "encodedPassword";
         String roleName = "ROLE_TEST";
-
-        when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
 
         RoleEntity roleEntity = new RoleEntity();
         roleEntity.setName(roleName);
@@ -59,10 +46,11 @@ public class UserServiceIntegrationTest {
 
         assertNotNull(userEntity.getId());
         assertEquals(login, userEntity.getLogin());
-        //assertEquals(encodedPassword, userEntity.getPassword());
-        //assertNotNull(userEntity.getCreatedAt());
-        assertEquals(roleName, userEntity.getRoleEntity().getName());
 
-        //verify(passwordEncoder, times(1)).encode(password);
+        boolean matches = passwordEncoder.matches(password, userEntity.getPassword());
+        assertTrue(matches);
+
+        // assertNotNull(userEntity.getCreatedAt());
+        assertEquals(roleName, userEntity.getRoleEntity().getName());
     }
 }
