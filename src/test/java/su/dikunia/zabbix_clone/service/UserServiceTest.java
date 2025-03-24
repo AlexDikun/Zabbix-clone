@@ -54,7 +54,7 @@ public class UserServiceTest {
         newUser.setRoleEntity(roleEntity);
         newUser.setCreatedAt(LocalDateTime.now());
 
-        when(userRepository.save(any(UserEntity.class))).thenReturn(newUser); // Настраиваем возврат нового пользователя
+        when(userRepository.save(any(UserEntity.class))).thenReturn(newUser); 
 
         UserEntity userEntity = userService.createUser(login, password, roleEntity);
 
@@ -85,12 +85,12 @@ public class UserServiceTest {
 
         assertNotNull(userEntity);
         assertEquals(login, userEntity.getLogin());
-        assertEquals(existingUser.getPassword(), userEntity.getPassword()); // Пароль не должен измениться
+        assertEquals(existingUser.getPassword(), userEntity.getPassword()); 
         assertEquals(roleEntity, userEntity.getRoleEntity());
 
         verify(userRepository, times(1)).findByLogin(login);
-        verify(passwordEncoder, never()).encode(any(String.class)); // encode не должен вызываться
-        verify(userRepository, never()).save(any(UserEntity.class)); // save не должен вызываться
+        verify(passwordEncoder, never()).encode(any(String.class)); 
+        verify(userRepository, never()).save(any(UserEntity.class)); 
     }
 }
     
