@@ -50,7 +50,7 @@ public class UserServiceIntegrationTest {
         boolean matches = passwordEncoder.matches(password, userEntity.getPassword());
         assertTrue(matches);
 
-        // assertNotNull(userEntity.getCreatedAt());
+        assertNotNull(userEntity.getCreatedAt());
         assertEquals(roleName, userEntity.getRoleEntity().getName());
     }
 }
