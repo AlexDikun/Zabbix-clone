@@ -33,6 +33,8 @@ public class UserService {
             userEntity.setPassword(passwordEncoder.encode(password));
             userEntity.setRoleEntity(roleEntity);
             userEntity = userRepository.save(userEntity);
+
+            userEntity = userRepository.findByLogin(login).get();
         }
 
         return userEntity;
