@@ -67,6 +67,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- AssertJ for assertions -->
+    	<dependency>
+        	<groupId>org.assertj</groupId>
+        	<artifactId>assertj-core</artifactId>
+        	<scope>test</scope>
+    	</dependency>
+
         <!-- Security Test Dependency -->
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -86,6 +93,20 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <!-- dotenv-java -->
+        <dependency>
+            <groupId>io.github.cdimascio</groupId>
+            <artifactId>java-dotenv</artifactId>
+            <version>5.2.2</version>
+        </dependency>
+
+        <!-- db for test -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
