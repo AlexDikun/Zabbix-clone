@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -14,7 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import su.dikunia.zabbix_clone.domain.RoleEntity;
 import su.dikunia.zabbix_clone.domain.UserEntity;
+import su.dikunia.zabbix_clone.dto.UserDTO;
 import su.dikunia.zabbix_clone.repos.RoleRepository;
+import su.dikunia.zabbix_clone.repos.UserRepository;
 
 
 @DataJpaTest
@@ -27,6 +31,9 @@ public class UserServiceIntegrationTest {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -42,10 +49,13 @@ public class UserServiceIntegrationTest {
         roleEntity.setName(roleName);
         roleRepository.save(roleEntity);
 
-        UserEntity userEntity = userService.createUser(login, password, roleEntity);
+        UserDTO userDTO = userService.createUser(new UserDTO(login, password), Optional.of(roleEntity));
 
-        assertNotNull(userEntity.getId());
-        assertEquals(login, userEntity.getLogin());
+        assertNotNull(userDTO.getId());
+        assertEquals(login, userDTO.getLogin());
+
+        UserEntity userEntity = userRepository.findByLogin(login).orElse(null);
+        assertNotNull(userEntity);
 
         boolean matches = passwordEncoder.matches(password, userEntity.getPassword());
         assertTrue(matches);
