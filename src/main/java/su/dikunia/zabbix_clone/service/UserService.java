@@ -29,21 +29,23 @@ public class UserService {
     public UserDTO createUser(UserDTO userDTO, Optional<RoleEntity> roleEntityOptional) {
         Optional<UserEntity> optUser = userRepository.findByLogin(userDTO.getLogin());
         UserEntity userEntity;
-
-        if (optUser.isPresent()) 
+    
+        if (optUser.isPresent()) {
             userEntity = optUser.get();
-        else {
+        } else {
             userEntity = new UserEntity();
             userEntity.setLogin(userDTO.getLogin());
             userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-
-            RoleEntity roleEntity = roleEntityOptional.orElseGet(() -> roleRepository.findByName("ROLE_STAFF").get());
+    
+            RoleEntity roleEntity = roleEntityOptional.orElseGet(() ->
+                roleRepository.findByName("ROLE_STAFF")
+                              .orElseThrow(() -> new RuntimeException("ROLE_STAFF not found"))
+            );
+    
             userEntity.setRoleEntity(roleEntity);
             userEntity = userRepository.save(userEntity);
-
-            userEntity = userRepository.findByLogin(userDTO.getLogin()).get();
         }
-
+    
         userDTO.setId(userEntity.getId());
         return userDTO;
     }
