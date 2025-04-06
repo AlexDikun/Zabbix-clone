@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import su.dikunia.zabbix_clone.dto.UserDTO;
 import su.dikunia.zabbix_clone.service.UserService;
+import org.springframework.web.bind.annotation.PostMapping;
+
 
 @RestController
 @RequestMapping("/api/users")
@@ -19,7 +21,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-
+    @PostMapping
     public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
         System.out.println("Админ создает профиль пользователю!");
 
