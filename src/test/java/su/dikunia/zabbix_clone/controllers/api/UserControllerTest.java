@@ -3,6 +3,8 @@ package su.dikunia.zabbix_clone.controllers.api;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
@@ -27,7 +29,8 @@ import su.dikunia.zabbix_clone.dto.UserDTO;
 import su.dikunia.zabbix_clone.service.UserService;
 
 @WebMvcTest(UserController.class)
-@Import({SecurityConfiguration.class, UserControllerTest.TestConfig.class, TestPropertyConfig.class, UserController.class})
+@Import({SecurityConfiguration.class, TestPropertyConfig.class, UserController.class})
+@EnableAutoConfiguration(exclude=SecurityAutoConfiguration.class)
 public class UserControllerTest {
 
     @MockBean
@@ -71,11 +74,4 @@ public class UserControllerTest {
                 .andExpect(status().isForbidden());
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public ObjectMapper objectMapper() {
-            return new ObjectMapper();
-        }
-    }
 }
