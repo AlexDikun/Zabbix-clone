@@ -1,5 +1,7 @@
 package su.dikunia.zabbix_clone.config;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -10,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import su.dikunia.zabbix_clone.service.UserService;
 import su.dikunia.zabbix_clone.service.RoleService;
 import su.dikunia.zabbix_clone.domain.RoleEntity;
+import su.dikunia.zabbix_clone.dto.UserDTO;
 
 @Component
 public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
@@ -35,7 +38,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         roleService.createRole("ROLE_MODER");
         roleService.createRole("ROLE_STAFF");
 
-        userService.createUser("ADMIN", "ADMIN", grandRole);
+        UserDTO userDTO = new UserDTO("ADMIN", "ADMIN");
+
+        userService.createUser(userDTO, Optional.of(grandRole));
 
         alreadySetup = true;
     }

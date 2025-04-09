@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import su.dikunia.zabbix_clone.domain.RoleEntity;
 import su.dikunia.zabbix_clone.domain.UserEntity;
+import su.dikunia.zabbix_clone.dto.UserDTO;
+import su.dikunia.zabbix_clone.repos.RoleRepository;
 import su.dikunia.zabbix_clone.repos.UserRepository;
 
 @Service
@@ -18,26 +20,34 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Transactional
-    public UserEntity createUser(final String login, final String password, RoleEntity roleEntity) {
-        Optional<UserEntity> optUser = userRepository.findByLogin(login);
+    public UserDTO createUser(UserDTO userDTO, Optional<RoleEntity> roleEntityOptional) {
+        Optional<UserEntity> optUser = userRepository.findByLogin(userDTO.getLogin());
         UserEntity userEntity;
-
-        if (optUser.isPresent()) 
+    
+        if (optUser.isPresent()) {
             userEntity = optUser.get();
-        else {
+        } else {
             userEntity = new UserEntity();
-            userEntity.setLogin(login);
-            userEntity.setPassword(passwordEncoder.encode(password));
+            userEntity.setLogin(userDTO.getLogin());
+            userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+    
+            RoleEntity roleEntity = roleEntityOptional.orElseGet(() ->
+                roleRepository.findByName("ROLE_STAFF")
+                              .orElseThrow(() -> new RuntimeException("ROLE_STAFF not found"))
+            );
+    
             userEntity.setRoleEntity(roleEntity);
             userEntity = userRepository.save(userEntity);
-
-            userEntity = userRepository.findByLogin(login).get();
         }
-
-        return userEntity;
+    
+        userDTO.setId(userEntity.getId());
+        return userDTO;
     }
     
 }
