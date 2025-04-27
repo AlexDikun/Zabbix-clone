@@ -7,7 +7,6 @@ import su.dikunia.zabbix_clone.config.EnvConfiguration;
 
 @SpringBootApplication
 public class ZabbixCloneApplication {
-
 	public static void main(String[] args) {
 		EnvConfiguration.loadEnv();
 		
