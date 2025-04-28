@@ -1,6 +1,7 @@
 package su.dikunia.zabbix_clone.security;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
@@ -70,9 +71,13 @@ public class JwtUtil {
                 .compact();
     }
 
-    public Boolean validateToken(String token, String login) { 
-        final String extractedLogin = extractLogin(token);
-        return extractedLogin.equals(login) && !isTokenExpired(token);
+    public Boolean validateToken(String token, String login) {
+        try {
+            final String extractedLogin = extractLogin(token);
+            return extractedLogin.equals(login) && !isTokenExpired(token);
+        } catch (ExpiredJwtException e) {
+            return false;
+        }
     }
 
     private Key getSigningKey(String secretKey) {
