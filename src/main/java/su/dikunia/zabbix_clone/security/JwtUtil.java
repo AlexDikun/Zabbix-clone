@@ -80,7 +80,7 @@ public class JwtUtil {
         }
     }
 
-    private Key getSigningKey(String secretKey) {
+    Key getSigningKey(String secretKey) {
         byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
         return new SecretKeySpec(keyBytes, SignatureAlgorithm.HS256.getJcaName());
     }
