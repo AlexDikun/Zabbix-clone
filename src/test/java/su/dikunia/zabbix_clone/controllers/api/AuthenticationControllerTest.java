@@ -8,6 +8,10 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import su.dikunia.zabbix_clone.dto.AuthDTO;
 import su.dikunia.zabbix_clone.service.AuthenticationService;
 
 import static org.mockito.ArgumentMatchers.anyString;
@@ -23,13 +27,16 @@ public class AuthenticationControllerTest {
     @Mock
     private AuthenticationService authenticationService;
 
+    
+    private ObjectMapper objectMapper;
+
     private MockMvc mockMvc;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(authController).build();
-
+        objectMapper = new ObjectMapper();
         System.setProperty("jwt.secret", "my_secret_key_here_with_at_least_256_bits");
     }
 
@@ -37,10 +44,11 @@ public class AuthenticationControllerTest {
     public void testAuthenticate() throws Exception {
         when(authenticationService.authenticate(anyString(), anyString())).thenReturn("generated_token");
 
-        mockMvc.perform(post("/api/auth/authenticate")
-                .param("login", "testUser@company.ru")
-                .param("password", "password")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+        AuthDTO authDto = new AuthDTO("testUser@company.ru", "password");
+
+        mockMvc.perform(post("/api/auth/authenticate", authDto)
+                .content(objectMapper.writeValueAsString(authDto))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
