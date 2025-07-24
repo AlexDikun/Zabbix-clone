@@ -11,7 +11,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
 import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
@@ -31,7 +30,7 @@ public class SecurityConfiguration {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
-                    .requestMatchers("/authenticate", "/refresh")
+                    .requestMatchers("/api/auth/authenticate", "/api/auth/refresh")
                     .permitAll()
                     .anyRequest().authenticated()
             )
