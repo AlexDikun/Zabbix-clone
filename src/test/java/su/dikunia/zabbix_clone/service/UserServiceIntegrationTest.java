@@ -11,12 +11,15 @@ import org.slf4j.LoggerFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import su.dikunia.zabbix_clone.config.SecurityConfiguration;
 import su.dikunia.zabbix_clone.config.TestPropertyConfig;
 import su.dikunia.zabbix_clone.domain.RoleEntity;
 import su.dikunia.zabbix_clone.domain.UserEntity;
@@ -26,10 +29,13 @@ import su.dikunia.zabbix_clone.repos.UserRepository;
 
 
 @SpringBootTest
-@ContextConfiguration(classes = TestPropertyConfig.class)
+@ContextConfiguration(classes = {TestPropertyConfig.class, SecurityConfiguration.class})
 @ActiveProfiles("test")
 @ComponentScan(basePackages = "su.dikunia.zabbix_clone")
 public class UserServiceIntegrationTest {
+
+    @MockBean
+    private UserDetailsService userDetailsService;
 
     @Autowired
     private UserService userService;
