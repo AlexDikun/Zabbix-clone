@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
@@ -28,6 +29,7 @@ import su.dikunia.zabbix_clone.dto.UserDTO;
 import su.dikunia.zabbix_clone.repos.RoleRepository;
 import su.dikunia.zabbix_clone.repos.UserRepository;
 
+//@DataJpaTest
 @SpringBootTest(properties = "spring.main.allow-bean-definition-overriding=true")
 @Import(SecurityConfiguration.class)
 @ContextConfiguration(classes = {TestPropertyConfig.class, TestSecurityConfiguration.class}) 
