@@ -23,14 +23,14 @@ public class AuthenticationService {
     public String authenticate(String login, String password) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login, password));
         final UserDetails userDetails = userDetailsService.loadUserByUsername(login);
-        return jwtUtil.generateAccessToken(userDetails.getUsername());
+        return jwtUtil.generateAccessToken(userDetails);
     }
 
     public String refreshToken(String token) {
         final String login = jwtUtil.extractLogin(token);
         final UserDetails userDetails = userDetailsService.loadUserByUsername(login);
         if (jwtUtil.validateToken(token, userDetails.getUsername())) {
-            return jwtUtil.generateAccessToken(userDetails.getUsername());
+            return jwtUtil.generateAccessToken(userDetails);
         }
         return null;
     }
