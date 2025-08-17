@@ -36,6 +36,7 @@ import su.dikunia.zabbix_clone.config.SecurityConfiguration;
 import su.dikunia.zabbix_clone.config.TestPropertyConfig;
 import su.dikunia.zabbix_clone.repos.RoleRepository;
 import su.dikunia.zabbix_clone.repos.UserRepository;
+import su.dikunia.zabbix_clone.security.JwtRequestFilter;
 
 @WebMvcTest
 @ContextConfiguration(classes = {TestPropertyConfig.class, SecurityConfiguration.class})
@@ -57,6 +58,9 @@ public class UserEntityTests {
 
     @Mock
     private EntityManager entityManager;
+
+    @MockBean
+    private JwtRequestFilter jwtRequestFilter;
 
     @BeforeAll
     public static void setUp() {
