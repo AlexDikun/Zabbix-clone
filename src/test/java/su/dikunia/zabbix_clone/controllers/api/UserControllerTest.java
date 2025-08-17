@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -24,15 +25,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import su.dikunia.zabbix_clone.config.SecurityConfiguration;
 import su.dikunia.zabbix_clone.config.TestPropertyConfig;
 import su.dikunia.zabbix_clone.dto.UserDTO;
+import su.dikunia.zabbix_clone.security.JwtUtil;
 import su.dikunia.zabbix_clone.service.UserService;
 
 @WebMvcTest(UserController.class)
-@Import({SecurityConfiguration.class, TestPropertyConfig.class, UserController.class})
-@EnableAutoConfiguration(exclude=SecurityAutoConfiguration.class)
+@Import({SecurityConfiguration.class, TestPropertyConfig.class})
+@EnableAutoConfiguration(exclude = SecurityAutoConfiguration.class)
 public class UserControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private UserDetailsService userDetailsService; 
+
+    @MockBean
+    private JwtUtil jwtUtil;
 
     @Autowired
     private MockMvc mockMvc;
@@ -53,8 +61,7 @@ public class UserControllerTest {
     @WithMockUser(roles = "ADMIN")
     void adminCreateAccount_success() throws Exception {
         UserDTO userDTO = new UserDTO(testLogin, testPassword);
-
-        mockMvc.perform(post("/api/users", userDTO)
+        mockMvc.perform(post("/api/users")
                 .content(objectMapper.writeValueAsString(userDTO))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -65,11 +72,10 @@ public class UserControllerTest {
     @WithMockUser(roles = "STAFF")
     void staffCreateAccount_failure() throws Exception {
         UserDTO userDTO = new UserDTO(testLogin, testPassword);
-
-        mockMvc.perform(post("/api/users", userDTO)
+        mockMvc.perform(post("/api/users")
                 .content(objectMapper.writeValueAsString(userDTO))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
     }
-
+    
 }

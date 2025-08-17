@@ -20,8 +20,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -35,7 +37,7 @@ import su.dikunia.zabbix_clone.config.TestPropertyConfig;
 import su.dikunia.zabbix_clone.repos.RoleRepository;
 import su.dikunia.zabbix_clone.repos.UserRepository;
 
-@SpringBootTest
+@WebMvcTest
 @ContextConfiguration(classes = {TestPropertyConfig.class, SecurityConfiguration.class})
 public class UserEntityTests {
 
@@ -43,6 +45,9 @@ public class UserEntityTests {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @MockBean
+    private UserDetailsService userDetailsService; 
 
     @Mock
     private RoleRepository roleRepository;
