@@ -22,7 +22,8 @@ import su.dikunia.zabbix_clone.dto.UserDTO;
 import su.dikunia.zabbix_clone.repos.RoleRepository;
 import su.dikunia.zabbix_clone.repos.UserRepository;
 
-@SpringBootTest@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@SpringBootTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 @Import(SecurityConfiguration.class) 
 @Transactional
 @Rollback 
