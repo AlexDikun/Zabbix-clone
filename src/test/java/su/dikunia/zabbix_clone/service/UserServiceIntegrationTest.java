@@ -8,75 +8,85 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import su.dikunia.zabbix_clone.config.SecurityConfiguration;
-import su.dikunia.zabbix_clone.config.TestBeansConfig;
-import su.dikunia.zabbix_clone.config.TestPropertyConfig;
-import su.dikunia.zabbix_clone.config.TestSecurityConfiguration;
 import su.dikunia.zabbix_clone.domain.RoleEntity;
 import su.dikunia.zabbix_clone.domain.UserEntity;
 import su.dikunia.zabbix_clone.dto.UserDTO;
 import su.dikunia.zabbix_clone.repos.RoleRepository;
 import su.dikunia.zabbix_clone.repos.UserRepository;
 
-//@DataJpaTest
-@SpringBootTest(properties = "spring.main.allow-bean-definition-overriding=true")
-@Import(SecurityConfiguration.class)
-@ContextConfiguration(classes = {TestPropertyConfig.class, TestSecurityConfiguration.class}) 
-@ActiveProfiles("test")
-@ComponentScan(basePackages = {"su.dikunia.zabbix_clone.repos", "su.dikunia.zabbix_clone.services"})
-public class UserServiceIntegrationTest {
-
-    @MockBean
-    private UserDetailsService userDetailsService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Test
-    @Transactional
-    public void testCreateUser() {
+@SpringBootTest@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@Import(SecurityConfiguration.class) 
+@Transactional
+@Rollback 
+public class UserServiceIntegrationTest {    
+    static {        
+        System.setProperty("jwt.secret", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.e30.QwoOdMKxwpjCuC14w47CisOQw74wD8OKw6p7cmjDpsKnHcOfw4lKHcKLZyNjOQ");    
+    }    
+    
+    @Autowired    
+    private UserService userService;    
+    
+    @Autowired    
+    private RoleRepository roleRepository;    
+    
+    @Autowired    
+    private UserRepository userRepository;    
+    
+    @Autowired    
+    private PasswordEncoder passwordEncoder;    
+    
+    @Test    
+    public void testCreateUser() {                
+        String login = "testLogins";        
+        String password = "password";        
+        String roleName = "ROLE_TEST";        
         
-        String login = "testLogins";
-        String password = "password";
-        String roleName = "ROLE_TEST";
+        RoleEntity roleTest = new RoleEntity();        
+        roleTest.setName(roleName);        
+        roleRepository.save(roleTest);        
+        UserDTO userDTO = userService.createUser(new UserDTO(login, password), Optional.of(roleTest));
+        assertNotNull(userDTO.getId());        
+        assertEquals(login, userDTO.getLogin());        
+        UserEntity savedEntity = userRepository.findByLogin(login).orElse(null);        
+        assertNotNull(savedEntity);        
+        boolean matches = passwordEncoder.matches(password, savedEntity.getPassword());        
+        assertTrue(matches);        
+        assertNotNull(savedEntity.getCreatedAt());        
+        assertEquals(roleName, savedEntity.getRoleEntity().getName());            
+        
+    }    
+    
+    @Test    
+    public void testCreateUser_ExistingUser() {  
+        String login = "existingUser";              
+        String roleName = "ROLE_TEST"; 
+        
+        RoleEntity roleTest = new RoleEntity();        
+        roleTest.setName(roleName);        
+        roleRepository.save(roleTest);
 
-        RoleEntity roleEntity = new RoleEntity();
-        roleEntity.setName(roleName);
-        roleRepository.save(roleEntity);
-
-        UserDTO userDTO = userService.createUser(new UserDTO(login, password), Optional.of(roleEntity));
-
-        assertNotNull(userDTO.getId());
-        assertEquals(login, userDTO.getLogin());
-
-        UserEntity userEntity = userRepository.findByLogin(login).orElse(null);
-        assertNotNull(userEntity);
-
-        boolean matches = passwordEncoder.matches(password, userEntity.getPassword());
-        assertTrue(matches);
-
-        assertNotNull(userEntity.getCreatedAt());
-        assertEquals(roleName, userEntity.getRoleEntity().getName()); 
+        UserEntity existingUser = new UserEntity();        
+        existingUser.setLogin(login);        
+        existingUser.setPassword(passwordEncoder.encode("oldpass"));        
+        existingUser.setRoleEntity(roleTest);        
+        userRepository.save(existingUser);        
+    
+        UserDTO userDTO = new UserDTO();        
+        userDTO.setLogin(login);        
+        userDTO.setPassword("newpass");        
+        UserDTO result = userService.createUser(userDTO, Optional.of(roleTest));        
        
+        assertEquals(existingUser.getId(), result.getId());              
+        UserEntity updatedUser = userRepository.findByLogin(login).orElse(null);        
+        assertTrue(passwordEncoder.matches("oldpass", updatedUser.getPassword()));    
     }
+    
 }
