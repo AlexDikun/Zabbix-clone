@@ -56,7 +56,7 @@ public class UserServiceIntegrationTest {
         assertNotNull(userDTO.getId());        
         assertEquals(login, userDTO.getLogin());        
         UserEntity savedEntity = userRepository.findByLogin(login).orElse(null);        
-        assertNotNull(savedEntity);        
+        assertNotNull(savedEntity, "User not found in the database!");       
         boolean matches = passwordEncoder.matches(password, savedEntity.getPassword());        
         assertTrue(matches);        
         assertNotNull(savedEntity.getCreatedAt());        
