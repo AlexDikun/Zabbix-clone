@@ -58,7 +58,7 @@ public class AuthenticationServiceTest {
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()));
         when(userDetailsService.loadUserByUsername(login)).thenReturn(userDetails);
-        when(jwtUtil.generateAccessToken(login)).thenReturn("generated_token");
+        when(jwtUtil.generateAccessToken(userDetails)).thenReturn("generated_token");
 
         String token = authenticationService.authenticate(login, password);
 
@@ -71,7 +71,7 @@ public class AuthenticationServiceTest {
         when(jwtUtil.extractLogin(anyString())).thenReturn(login);
         when(userDetailsService.loadUserByUsername(login)).thenReturn(userDetails);
         when(jwtUtil.validateToken(anyString(), anyString())).thenReturn(true);
-        when(jwtUtil.generateAccessToken(login)).thenReturn("new_token");
+        when(jwtUtil.generateAccessToken(userDetails)).thenReturn("new_token");
 
         String newToken = authenticationService.refreshToken("old_token");
 
