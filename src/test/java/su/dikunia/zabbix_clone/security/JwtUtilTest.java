@@ -2,10 +2,16 @@ package su.dikunia.zabbix_clone.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import su.dikunia.zabbix_clone.domain.UserEntity;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.security.Key;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,12 +25,17 @@ public class JwtUtilTest {
     private String login = "testuser";
     private String validToken;
     private String expiredToken;
+    private UserDetails userDetails;
 
     @BeforeEach
     public void setUp() {
         System.setProperty("jwt.secret", secretKey);
 
         jwtUtil = new JwtUtil();
+
+        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_STAFF");
+        userDetails = new org.springframework.security.core.userdetails.User(
+                    login, "password", Collections.singletonList(authority));
 
         Key signingKey = jwtUtil.getSigningKey(secretKey);
 
@@ -54,7 +65,7 @@ public class JwtUtilTest {
 
     @Test
     public void testGenerateAccessToken() {
-        String generatedToken = jwtUtil.generateAccessToken(login);
+        String generatedToken = jwtUtil.generateAccessToken(userDetails);
         assertNotNull(generatedToken);
         assertTrue(jwtUtil.validateToken(generatedToken, login));
     }

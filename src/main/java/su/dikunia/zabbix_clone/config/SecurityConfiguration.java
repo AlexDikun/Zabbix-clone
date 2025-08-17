@@ -11,16 +11,21 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import jakarta.servlet.http.HttpServletResponse;
+import su.dikunia.zabbix_clone.security.JwtRequestFilter;
 
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
 
     private final UserDetailsService userDetailsService;
+    private final JwtRequestFilter jwtRequestFilter;
 
-    public SecurityConfiguration(UserDetailsService userDetailsService) {
+    public SecurityConfiguration(UserDetailsService userDetailsService, JwtRequestFilter jwtRequestFilter) {
         this.userDetailsService = userDetailsService;
+        this.jwtRequestFilter = jwtRequestFilter;
     }
 
     @Bean
@@ -28,6 +33,7 @@ public class SecurityConfiguration {
         http
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .csrf(csrf -> csrf.disable())
+            .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
                     .requestMatchers("/api/auth/authenticate", "/api/auth/refresh")
