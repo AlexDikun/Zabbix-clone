@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import su.dikunia.zabbix_clone.domain.RoleEntity;
 import su.dikunia.zabbix_clone.domain.UserEntity;
 import su.dikunia.zabbix_clone.dto.UserDTO;
+import su.dikunia.zabbix_clone.enums.RoleName;
 import su.dikunia.zabbix_clone.repos.RoleRepository;
 import su.dikunia.zabbix_clone.repos.UserRepository;
 
@@ -38,7 +39,7 @@ public class UserService {
             userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
     
             RoleEntity roleEntity = roleEntityOptional.orElseGet(() ->
-                roleRepository.findByName("ROLE_STAFF")
+                roleRepository.findByName(RoleName.STAFF)
                               .orElseThrow(() -> new RuntimeException("ROLE_STAFF not found"))
             );
     
