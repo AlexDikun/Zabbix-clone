@@ -19,6 +19,7 @@ import su.dikunia.zabbix_clone.config.SecurityConfiguration;
 import su.dikunia.zabbix_clone.domain.RoleEntity;
 import su.dikunia.zabbix_clone.domain.UserEntity;
 import su.dikunia.zabbix_clone.dto.UserDTO;
+import su.dikunia.zabbix_clone.enums.RoleName;
 import su.dikunia.zabbix_clone.repos.RoleRepository;
 import su.dikunia.zabbix_clone.repos.UserRepository;
 
@@ -48,7 +49,7 @@ public class UserServiceIntegrationTest {
     public void testCreateUser() {                
         String login = "testLogins";        
         String password = "password";        
-        String roleName = "ROLE_TEST";        
+        RoleName roleName = RoleName.STAFF;        
         
         RoleEntity roleTest = new RoleEntity();        
         roleTest.setName(roleName);        
@@ -68,7 +69,7 @@ public class UserServiceIntegrationTest {
     @Test    
     public void testCreateUser_ExistingUser() {  
         String login = "existingUser";              
-        String roleName = "ROLE_TEST"; 
+        RoleName roleName = RoleName.STAFF;   
         
         RoleEntity roleTest = new RoleEntity();        
         roleTest.setName(roleName);        

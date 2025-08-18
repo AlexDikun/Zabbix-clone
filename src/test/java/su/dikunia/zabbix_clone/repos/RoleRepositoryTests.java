@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import su.dikunia.zabbix_clone.domain.RoleEntity;
+import su.dikunia.zabbix_clone.enums.RoleName;
 
 public class RoleRepositoryTests {
 
@@ -27,7 +28,8 @@ public class RoleRepositoryTests {
     void testFindByRoleNameSuccessfully() {
         System.out.println("Сценарий успешного поиска в репозитории");
 
-        String roleName = "ROLE_INTERN";
+        RoleName roleName = RoleName.STAFF;
+
         RoleEntity roleEntity = new RoleEntity();
         roleEntity.setName(roleName);
 
@@ -42,7 +44,7 @@ public class RoleRepositoryTests {
     void testFindByNameNotFound() {
         System.out.println("Сценарий неуспешного поиска в репозитории");
 
-        String roleName = "ROLE_NON_EXISTENT";
+        RoleName roleName = null;
 
         when(roleRepository.findByName(roleName)).thenReturn(Optional.empty());
         Optional<RoleEntity> foundRole = roleRepository.findByName(roleName);

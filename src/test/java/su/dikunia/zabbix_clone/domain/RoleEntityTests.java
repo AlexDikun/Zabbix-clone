@@ -24,19 +24,16 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import su.dikunia.zabbix_clone.config.TestPropertyConfig;
+import su.dikunia.zabbix_clone.enums.RoleName;
 
 
 @SpringBootTest
 @ContextConfiguration(classes = TestPropertyConfig.class)
 public class RoleEntityTests {
-
-    private static Validator validator; 
-
+    private static Validator validator;
+    private RoleEntity roleEntity;
     @Mock
     private EntityManager entityManager;
-
-    @InjectMocks
-    private RoleEntity roleEntity;
 
     @BeforeAll
     public static void setUp() {
@@ -47,42 +44,40 @@ public class RoleEntityTests {
     @BeforeEach
     public void init() {
         roleEntity = new RoleEntity();
-        roleEntity.setName("ROLE_TEST");
+        roleEntity.setName(RoleName.ADMIN); // Используем RoleName вместо строки
     }
 
     @Test
     void testRoleEntityValidation() {
         System.out.println("Создаем валидную роль!");
-
         RoleEntity roleEntity = new RoleEntity();
-        roleEntity.setName("ROLE_USER");
+        roleEntity.setName(RoleName.MODER); // Используем RoleName
         Set<ConstraintViolation<RoleEntity>> violations = validator.validate(roleEntity);
         assertThat(violations).isEmpty();
     }
 
-    @Test
-    void testRoleEntityValidationWithBlankName() {
-        System.out.println("Попытка создать роль с пустым именем!");
+   @Test
+void testRoleEntityValidationWithNullName() {
+    System.out.println("Попытка создать роль с пустым именем!");
+    RoleEntity roleEntity = new RoleEntity();
+    roleEntity.setName(null);
+    Set<ConstraintViolation<RoleEntity>> violations = validator.validate(roleEntity);
 
-        RoleEntity roleEntity = new RoleEntity();
-        roleEntity.setName(""); 
-        Set<ConstraintViolation<RoleEntity>> violations = validator.validate(roleEntity);
-        assertThat(violations).isNotEmpty();
-        assertThat(violations.stream().anyMatch(violation -> violation.getMessage().contains("name must not be blank"))).isTrue();
-    }
+    assertThat(violations).isNotEmpty();
+    assertThat(violations)
+        .extracting(ConstraintViolation::getMessage)
+        .contains("Role name must not be null"); 
+}
 
     @Test
     public void testCreationTimestampWithMock() {
         System.out.println("Сценарий проверки заполнения даты и времени сущности в момент ее создания!");
-
         LocalDateTime now = LocalDateTime.now();
         roleEntity.setCreatedAt(now);
         entityManager.persist(roleEntity);
         assertNotNull(roleEntity.getCreatedAt());
-
         LocalDateTime createdAt = roleEntity.getCreatedAt();
         assertTrue(createdAt.isBefore(LocalDateTime.now()));
-
         verify(entityManager, times(1)).persist(roleEntity);
     }
 }

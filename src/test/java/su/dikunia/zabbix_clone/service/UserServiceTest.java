@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import su.dikunia.zabbix_clone.domain.RoleEntity;
 import su.dikunia.zabbix_clone.domain.UserEntity;
 import su.dikunia.zabbix_clone.dto.UserDTO;
+import su.dikunia.zabbix_clone.enums.RoleName;
 import su.dikunia.zabbix_clone.repos.UserRepository;
 
 public class UserServiceTest {
@@ -44,7 +45,7 @@ public class UserServiceTest {
         String login = "testLogin";
         String password = "password";
         String encodedPassword = "encodedPassword";
-        String roleName = "ROLE_TEST";
+        RoleName roleName = RoleName.STAFF;   
 
         RoleEntity roleEntity = new RoleEntity();
         roleEntity.setName(roleName);

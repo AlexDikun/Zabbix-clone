@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import su.dikunia.zabbix_clone.domain.RoleEntity;
+import su.dikunia.zabbix_clone.enums.RoleName;
 import su.dikunia.zabbix_clone.repos.RoleRepository;
 
 public class RoleServiceTest {
@@ -34,7 +35,7 @@ public class RoleServiceTest {
 
     @Test
     public void testCreateRole_NewRole() {
-        String roleName = "ROLE_TEST";
+        RoleName roleName = RoleName.STAFF;   
         RoleEntity roleEntity = new RoleEntity();
         roleEntity.setName(roleName);
 
@@ -50,7 +51,7 @@ public class RoleServiceTest {
 
     @Test
     public void testCreateRole_ExistingRole() {
-        String roleName = "ROLE_USER";
+        RoleName roleName = RoleName.STAFF;   
         RoleEntity existingRole = new RoleEntity();
         existingRole.setName(roleName);
 

@@ -34,6 +34,7 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import su.dikunia.zabbix_clone.config.SecurityConfiguration;
 import su.dikunia.zabbix_clone.config.TestPropertyConfig;
+import su.dikunia.zabbix_clone.enums.RoleName;
 import su.dikunia.zabbix_clone.repos.RoleRepository;
 import su.dikunia.zabbix_clone.repos.UserRepository;
 import su.dikunia.zabbix_clone.security.JwtRequestFilter;
@@ -73,9 +74,9 @@ public class UserEntityTests {
         MockitoAnnotations.openMocks(this);
 
         RoleEntity roleEntity = new RoleEntity();
-        roleEntity.setName("ROLE_TEST");
+        roleEntity.setName(RoleName.STAFF);
 
-        when(roleRepository.findByName("ROLE_TEST")).thenReturn(Optional.of(roleEntity));
+        when(roleRepository.findByName(RoleName.STAFF)).thenReturn(Optional.of(roleEntity));
     }
 
     private UserEntity createUserEntity(String login, String password, boolean encodePassword) {
@@ -84,7 +85,7 @@ public class UserEntityTests {
         userEntity.setPassword(encodePassword ? passwordEncoder.encode(password) : password);
         userEntity.setCreatedAt(LocalDateTime.now());
 
-        RoleEntity roleEntity = roleRepository.findByName("ROLE_TEST")
+        RoleEntity roleEntity = roleRepository.findByName(RoleName.STAFF)
                                                .orElseThrow(() -> new RuntimeException("Role not found"));
         userEntity.setRoleEntity(roleEntity);
 
