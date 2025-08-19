@@ -1,5 +1,7 @@
 package su.dikunia.zabbix_clone.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 import su.dikunia.zabbix_clone.domain.UserEntity;
 import su.dikunia.zabbix_clone.enums.RoleName;
@@ -10,7 +12,7 @@ public class UserDTO {
     private Long id;
 
     private String login;
-
+    @JsonIgnore
     private String password;
 
     private RoleName roleName;
