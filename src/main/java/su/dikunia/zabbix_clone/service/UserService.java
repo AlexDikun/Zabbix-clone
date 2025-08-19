@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.EntityNotFoundException;
 import su.dikunia.zabbix_clone.domain.RoleEntity;
 import su.dikunia.zabbix_clone.domain.UserEntity;
 import su.dikunia.zabbix_clone.dto.UserDTO;
@@ -53,14 +54,20 @@ public class UserService {
 
     public UserDTO changeUserRole(Long user_id, RoleName roleName) {
         UserEntity userEntity = userRepository.findById(user_id)
-            .orElseThrow(() -> new RuntimeException("User not found!"));
+            .orElseThrow(() -> new EntityNotFoundException("User not found!"));
         RoleEntity role = roleRepository.findByName(roleName)
-            .orElseThrow(() -> new RuntimeException("Role not found!"));
+            .orElseThrow(() -> new EntityNotFoundException("Role not found!"));
 
         userEntity.setRoleEntity(role);
         userRepository.save(userEntity);
 
         return UserDTO.fromEntity(userEntity);
     }
-    
+
+    public void changeUserPassword(Long user_id, String newPassword) {
+        UserEntity userEntity = userRepository.findById(user_id)
+            .orElseThrow(() -> new EntityNotFoundException("User not found!"));
+        userEntity.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(userEntity);
+    }
 }
