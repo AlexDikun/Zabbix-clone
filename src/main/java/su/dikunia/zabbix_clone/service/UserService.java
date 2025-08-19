@@ -47,9 +47,8 @@ public class UserService {
             userEntity.setRoleEntity(roleEntity);
             userEntity = userRepository.save(userEntity);
         }
-    
-        userDTO.setId(userEntity.getId());
-        return userDTO;
+        
+        return UserDTO.fromEntity(userEntity);
     }
 
     public UserDTO changeUserRole(Long user_id, RoleName roleName) {
