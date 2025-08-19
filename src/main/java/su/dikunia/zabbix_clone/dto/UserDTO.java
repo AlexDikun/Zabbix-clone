@@ -1,6 +1,7 @@
 package su.dikunia.zabbix_clone.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 import su.dikunia.zabbix_clone.domain.UserEntity;
@@ -12,10 +13,18 @@ public class UserDTO {
     private Long id;
 
     private String login;
-    @JsonIgnore
     private String password;
-
     private RoleName roleName;
+
+    @JsonIgnore
+    public String getPassword() {
+        return password;
+    }
+
+    @JsonProperty
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public UserDTO() {}
     
