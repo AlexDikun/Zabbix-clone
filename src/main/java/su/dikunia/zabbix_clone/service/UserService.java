@@ -50,5 +50,17 @@ public class UserService {
         userDTO.setId(userEntity.getId());
         return userDTO;
     }
+
+    public UserDTO changeUserRole(Long user_id, RoleName roleName) {
+        UserEntity userEntity = userRepository.findById(user_id)
+            .orElseThrow(() -> new RuntimeException("User not found!"));
+        RoleEntity role = roleRepository.findByName(roleName)
+            .orElseThrow(() -> new RuntimeException("Role not found!"));
+
+        userEntity.setRoleEntity(role);
+        userRepository.save(userEntity);
+
+        return UserDTO.fromEntity(userEntity);
+    }
     
 }
