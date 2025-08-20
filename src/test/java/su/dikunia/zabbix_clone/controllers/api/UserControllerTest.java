@@ -77,5 +77,21 @@ public class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void adminChangeUserRole() {}
+
+    @Test
+    @WithMockUser(roles = "STAFF")
+    void staffChangeUserRole() {}
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void adminChangeUserPassword() {}
+
+    @Test
+    @WithMockUser(roles = "STAFF")
+    void staffChangeUserPassword() {}
     
 }
