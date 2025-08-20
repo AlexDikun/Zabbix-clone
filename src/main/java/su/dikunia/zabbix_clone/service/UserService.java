@@ -58,7 +58,7 @@ public class UserService {
             .orElseThrow(() -> new EntityNotFoundException("Role not found!"));
 
         userEntity.setRoleEntity(role);
-        userRepository.save(userEntity);
+        userEntity = userRepository.save(userEntity);
 
         return UserDTO.fromEntity(userEntity);
     }
