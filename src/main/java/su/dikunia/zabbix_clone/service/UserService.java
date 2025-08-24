@@ -1,5 +1,6 @@
 package su.dikunia.zabbix_clone.service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,5 +69,14 @@ public class UserService {
             .orElseThrow(() -> new EntityNotFoundException("User not found!"));
         userEntity.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(userEntity);
+    }
+
+    @Transactional
+    public void archiveUser(Long user_id, int retentionDays) {
+        UserEntity user = userRepository.findById(user_id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        user.setDeleted(true);
+        user.setDeletedAt(LocalDateTime.now().plusDays(retentionDays));
+        userRepository.save(user);
     }
 }
