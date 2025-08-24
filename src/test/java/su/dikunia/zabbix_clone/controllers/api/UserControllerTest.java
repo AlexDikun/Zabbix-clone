@@ -120,8 +120,6 @@ public class UserControllerTest {
         UserEntity manager = userRepository.findByLogin(testLogin).get();
         RoleEntity roleModer = roleRepository.findByName(RoleName.MODER).get();
 
-        when(userService.changeUserRole(manager.getId(), roleModer.getName())).thenReturn(UserDTO.fromEntity(manager));
-
         mockMvc.perform(patch("/api/users/{user_id}/change-role", manager.getId())
             .param("roleName", roleModer.getName().toString())
             .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
