@@ -2,6 +2,8 @@ package su.dikunia.zabbix_clone.controllers.api;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -18,13 +20,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Optional;
+
 import su.dikunia.zabbix_clone.config.SecurityConfiguration;
 import su.dikunia.zabbix_clone.config.TestPropertyConfig;
+import su.dikunia.zabbix_clone.domain.RoleEntity;
+import su.dikunia.zabbix_clone.domain.UserEntity;
 import su.dikunia.zabbix_clone.dto.UserDTO;
+import su.dikunia.zabbix_clone.enums.RoleName;
+import su.dikunia.zabbix_clone.repos.RoleRepository;
+import su.dikunia.zabbix_clone.repos.UserRepository;
 import su.dikunia.zabbix_clone.security.JwtUtil;
 import su.dikunia.zabbix_clone.service.UserService;
 
@@ -40,6 +50,12 @@ public class UserControllerTest {
     private UserDetailsService userDetailsService; 
 
     @MockBean
+    private UserRepository userRepository;
+
+    @MockBean
+    private RoleRepository roleRepository;
+
+    @MockBean
     private JwtUtil jwtUtil;
 
     @Autowired
@@ -53,8 +69,28 @@ public class UserControllerTest {
 
     @BeforeEach
     void setup() {
+        MockitoAnnotations.openMocks(this);
+
         UserDTO mockUserDTO = new UserDTO(testLogin, testPassword);
         when(userService.createUser(any(UserDTO.class), any())).thenReturn(mockUserDTO);
+
+        RoleEntity roleStaff = new RoleEntity();
+        RoleName roleName = RoleName.STAFF;
+        roleStaff.setName(roleName);
+        when(roleRepository.findByName(roleName)).thenReturn(Optional.of(roleStaff));
+
+        RoleEntity roleModer = new RoleEntity();
+        RoleName newRoleName = RoleName.MODER;
+        roleModer.setName(newRoleName);
+        when(roleRepository.findByName(newRoleName)).thenReturn(Optional.of(roleModer));
+
+        UserEntity manager = new UserEntity();
+        manager.setId(12L);
+        manager.setLogin(testLogin);
+        manager.setPassword(testPassword);
+        manager.setRoleEntity(roleStaff);
+        when(userRepository.findById(manager.getId())).thenReturn(Optional.of(manager));
+        when(userRepository.findByLogin(testLogin)).thenReturn(Optional.of(manager));
     }
 
     @Test
@@ -80,18 +116,34 @@ public class UserControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    void adminChangeUserRole() {}
+    void adminChangeUserRole() throws Exception {
+        UserEntity manager = userRepository.findByLogin(testLogin).get();
+        RoleEntity roleModer = roleRepository.findByName(RoleName.MODER).get();
+
+        when(userService.changeUserRole(manager.getId(), roleModer.getName())).thenReturn(UserDTO.fromEntity(manager));
+
+        mockMvc.perform(patch("/api/users/{user_id}/change-role", manager.getId())
+            .param("roleName", roleModer.getName().toString())
+            .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+    }
 
     @Test
     @WithMockUser(roles = "STAFF")
-    void staffChangeUserRole() {}
+    void staffChangeUserRole() throws Exception {
+        UserEntity manager = userRepository.findByLogin(testLogin).get();
+        RoleEntity roleModer = roleRepository.findByName(RoleName.MODER).get();
+
+        mockMvc.perform(patch("/api/users/{user_id}/change-role", manager.getId())
+            .param("roleName", roleModer.getName().toString())
+            .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden());
+    }
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    void adminChangeUserPassword() {}
+    void adminChangeUserPassword() throws Exception {}
 
     @Test
     @WithMockUser(roles = "STAFF")
-    void staffChangeUserPassword() {}
+    void staffChangeUserPassword() throws Exception {}
     
 }
