@@ -49,5 +49,11 @@ public class UserEntity {
     @JoinColumn(name = "role_id", nullable = false)
     private RoleEntity roleEntity;
 
+    @Column(name = "is_deleted")
+    private boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
     public UserEntity() {}
 }
