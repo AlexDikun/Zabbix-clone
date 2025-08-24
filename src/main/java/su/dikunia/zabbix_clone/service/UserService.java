@@ -72,8 +72,8 @@ public class UserService {
     }
 
     @Transactional
-    public void archiveUser(Long user_id, int retentionDays) {
-        UserEntity user = userRepository.findById(user_id)
+    public void archiveUser(String login, int retentionDays) {
+        UserEntity user = userRepository.findByLogin(login)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         user.setDeleted(true);
         user.setDeletedAt(LocalDateTime.now().plusDays(retentionDays));
