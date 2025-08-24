@@ -15,6 +15,7 @@ import su.dikunia.zabbix_clone.dto.UserDTO;
 import su.dikunia.zabbix_clone.enums.RoleName;
 import su.dikunia.zabbix_clone.service.UserService;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,6 +53,15 @@ public class UserController {
 
         userService.changeUserPassword(user_id, newPassword);
         return ResponseEntity.ok("Пользователю выдан новый пароль!");
+    }
+
+    @DeleteMapping("/archive")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> archiveUser(@RequestParam String login, @RequestParam(defaultValue = "30") int retentionDays) {
+        System.out.println("Админ удаляет учетную запись пользователя!");
+
+        userService.archiveUser(login, retentionDays);
+        return ResponseEntity.ok("Учатная запись " + login + "была удалена!");
     }
     
 }
