@@ -138,10 +138,24 @@ public class UserControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    void adminChangeUserPassword() throws Exception {}
+    void adminChangeUserPassword() throws Exception {
+        UserEntity manager = userRepository.findByLogin(testLogin).get();
+        String newPassword = "newPassword";
+
+        mockMvc.perform(patch("/api/users/{user_id}/change-password", manager.getId())
+            .param("newPassword", newPassword)
+            .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+    }
 
     @Test
     @WithMockUser(roles = "STAFF")
-    void staffChangeUserPassword() throws Exception {}
+    void staffChangeUserPassword() throws Exception {
+        UserEntity manager = userRepository.findByLogin(testLogin).get();
+        String newPassword = "newPassword";
+
+        mockMvc.perform(patch("/api/users/{user_id}/change-password", manager.getId())
+            .param("newPassword", newPassword)
+            .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden());
+    }
     
 }
