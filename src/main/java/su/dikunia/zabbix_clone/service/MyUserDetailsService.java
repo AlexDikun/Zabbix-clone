@@ -34,8 +34,6 @@ public class MyUserDetailsService implements UserDetailsService {
     }
 
     private GrantedAuthority getAuthority(RoleEntity roleEntity) {
-        return new SimpleGrantedAuthority(roleEntity.getName());
+         return new SimpleGrantedAuthority("ROLE_" + roleEntity.getName());
     }
-
-
 }

@@ -13,6 +13,7 @@ import su.dikunia.zabbix_clone.service.UserService;
 import su.dikunia.zabbix_clone.service.RoleService;
 import su.dikunia.zabbix_clone.domain.RoleEntity;
 import su.dikunia.zabbix_clone.dto.UserDTO;
+import su.dikunia.zabbix_clone.enums.RoleName;
 
 @Component
 public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
@@ -34,9 +35,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             return;
         }
 
-        RoleEntity grandRole = roleService.createRole("ROLE_ADMIN");
-        roleService.createRole("ROLE_MODER");
-        roleService.createRole("ROLE_STAFF");
+        RoleEntity grandRole = roleService.createRole(RoleName.ADMIN);
+        roleService.createRole(RoleName.MODER);
+        roleService.createRole(RoleName.STAFF);
 
         UserDTO userDTO = new UserDTO("ADMIN", "ADMIN");
 

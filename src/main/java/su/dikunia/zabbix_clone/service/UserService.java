@@ -7,9 +7,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.EntityNotFoundException;
 import su.dikunia.zabbix_clone.domain.RoleEntity;
 import su.dikunia.zabbix_clone.domain.UserEntity;
 import su.dikunia.zabbix_clone.dto.UserDTO;
+import su.dikunia.zabbix_clone.enums.RoleName;
 import su.dikunia.zabbix_clone.repos.RoleRepository;
 import su.dikunia.zabbix_clone.repos.UserRepository;
 
@@ -38,16 +40,33 @@ public class UserService {
             userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
     
             RoleEntity roleEntity = roleEntityOptional.orElseGet(() ->
-                roleRepository.findByName("ROLE_STAFF")
+                roleRepository.findByName(RoleName.STAFF)
                               .orElseThrow(() -> new RuntimeException("ROLE_STAFF not found"))
             );
     
             userEntity.setRoleEntity(roleEntity);
             userEntity = userRepository.save(userEntity);
         }
-    
-        userDTO.setId(userEntity.getId());
-        return userDTO;
+        
+        return UserDTO.fromEntity(userEntity);
     }
-    
+
+    public UserDTO changeUserRole(Long user_id, RoleName roleName) {
+        UserEntity userEntity = userRepository.findById(user_id)
+            .orElseThrow(() -> new EntityNotFoundException("User not found!"));
+        RoleEntity role = roleRepository.findByName(roleName)
+            .orElseThrow(() -> new EntityNotFoundException("Role not found!"));
+
+        userEntity.setRoleEntity(role);
+        userEntity = userRepository.save(userEntity);
+
+        return UserDTO.fromEntity(userEntity);
+    }
+
+    public void changeUserPassword(Long user_id, String newPassword) {
+        UserEntity userEntity = userRepository.findById(user_id)
+            .orElseThrow(() -> new EntityNotFoundException("User not found!"));
+        userEntity.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(userEntity);
+    }
 }

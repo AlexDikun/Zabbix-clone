@@ -7,28 +7,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import su.dikunia.zabbix_clone.domain.RoleEntity;
+import su.dikunia.zabbix_clone.enums.RoleName;
 import su.dikunia.zabbix_clone.repos.RoleRepository;
 
 @Service
 public class RoleService {
-
     @Autowired
     private RoleRepository roleRepository;
 
     @Transactional
-    public RoleEntity createRole(final String name) {
-        Optional<RoleEntity> optRole = roleRepository.findByName(name);
-        RoleEntity roleEntity;
-
-        if (optRole.isPresent()) 
-            roleEntity = optRole.get();
-        else {
-            roleEntity = new RoleEntity();
-            roleEntity.setName(name);
-            roleEntity = roleRepository.save(roleEntity);
-        }
-
-        return roleEntity;
+    public RoleEntity createRole(final RoleName name) {
+        return roleRepository.findByName(name)
+            .orElseGet(() -> {
+                RoleEntity roleEntity = new RoleEntity();
+                roleEntity.setName(name);
+                return roleRepository.save(roleEntity);
+            });
     }
-    
 }
