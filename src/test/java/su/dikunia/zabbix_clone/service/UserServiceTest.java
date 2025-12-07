@@ -214,5 +214,34 @@ public class UserServiceTest {
         );
     }
 
+    @Test
+    void archiveUser_shouldSetDeletedAndDeletedAt() {
+        String login = "login@company.su";
+        int retentionDays = 30;
+
+        UserEntity userEntity = new UserEntity();
+        userEntity.setLogin(login);
+        userEntity.setDeleted(false);
+        userEntity.setDeletedAt(null);
+
+        when(userRepository.findByLogin(login)).thenReturn(Optional.of(userEntity));
+        userService.archiveUser(login, retentionDays);
+
+        assertTrue(userEntity.isDeleted());
+        assertNotNull(userEntity.getDeletedAt());
+        assertEquals(LocalDateTime.now().plusDays(retentionDays).toLocalDate(), userEntity.getDeletedAt().toLocalDate());
+        verify(userRepository, times(1)).save(userEntity);
+    }
+
+    @Test
+    void archiveUser_shouldThrowExceptionIfUserNotFound() {
+        String login = "nonExistentUser";
+
+        when(userRepository.findByLogin(login)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> {
+            userService.archiveUser(login, 30);
+        });
+    }
 }
     
