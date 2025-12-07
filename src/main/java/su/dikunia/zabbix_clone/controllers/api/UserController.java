@@ -60,8 +60,11 @@ public class UserController {
     public ResponseEntity<String> archiveUser(@RequestParam String login, @RequestParam(defaultValue = "30") int retentionDays) {
         System.out.println("Админ удаляет учетную запись пользователя!");
 
-        userService.archiveUser(login, retentionDays);
-        return ResponseEntity.ok("Учатная запись " + login + "была удалена!");
+        try {
+            userService.archiveUser(login, retentionDays);
+            return ResponseEntity.ok("Учатная запись " + login + "была удалена!");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
-    
 }
