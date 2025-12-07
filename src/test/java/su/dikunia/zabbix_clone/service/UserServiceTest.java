@@ -219,8 +219,12 @@ public class UserServiceTest {
         String login = "login@company.su";
         int retentionDays = 30;
 
+        RoleEntity roleEntity = new RoleEntity();
+        roleEntity.setName(RoleName.STAFF);
+
         UserEntity userEntity = new UserEntity();
         userEntity.setLogin(login);
+        userEntity.setRoleEntity(roleEntity);
         userEntity.setDeleted(false);
         userEntity.setDeletedAt(null);
 
@@ -240,6 +244,25 @@ public class UserServiceTest {
         when(userRepository.findByLogin(login)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> {
+            userService.archiveUser(login, 30);
+        });
+    }
+
+    @Test
+    void archiveUser_shouldThrowExceptionIfLastAdmin() {
+        String login = "lastAdmin";
+
+        RoleEntity roleEntity = new RoleEntity();
+        roleEntity.setName(RoleName.ADMIN);
+
+        UserEntity adminUser = new UserEntity();
+        adminUser.setLogin(login);
+        adminUser.setRoleEntity(roleEntity);
+
+        when(userRepository.findByLogin(login)).thenReturn(Optional.of(adminUser));
+        when(userRepository.countActiveAdmins()).thenReturn(1L); // Один активный администратор
+
+        assertThrows(IllegalStateException.class, () -> {
             userService.archiveUser(login, 30);
         });
     }
