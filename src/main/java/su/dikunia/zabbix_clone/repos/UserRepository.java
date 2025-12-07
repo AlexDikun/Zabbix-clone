@@ -21,4 +21,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     @Query("SELECT u FROM UserEntity u WHERE u.deleted = true AND u.deletedAt <= :thresholdDate")
     List<UserEntity> findDeletedBefore(@Param("thresholdDate") LocalDateTime thresholdDate);
+
+    @Query("SELECT COUNT(u) FROM UserEntity u WHERE u.roleEntity.name = 'ADMIN' AND u.deleted = false")
+    long countActiveAdmins();
 }
