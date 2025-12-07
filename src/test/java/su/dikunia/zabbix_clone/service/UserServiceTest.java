@@ -214,5 +214,57 @@ public class UserServiceTest {
         );
     }
 
+    @Test
+    void archiveUser_shouldSetDeletedAndDeletedAt() {
+        String login = "login@company.su";
+        int retentionDays = 30;
+
+        RoleEntity roleEntity = new RoleEntity();
+        roleEntity.setName(RoleName.STAFF);
+
+        UserEntity userEntity = new UserEntity();
+        userEntity.setLogin(login);
+        userEntity.setRoleEntity(roleEntity);
+        userEntity.setDeleted(false);
+        userEntity.setDeletedAt(null);
+
+        when(userRepository.findByLogin(login)).thenReturn(Optional.of(userEntity));
+        userService.archiveUser(login, retentionDays);
+
+        assertTrue(userEntity.isDeleted());
+        assertNotNull(userEntity.getDeletedAt());
+        assertEquals(LocalDateTime.now().plusDays(retentionDays).toLocalDate(), userEntity.getDeletedAt().toLocalDate());
+        verify(userRepository, times(1)).save(userEntity);
+    }
+
+    @Test
+    void archiveUser_shouldThrowExceptionIfUserNotFound() {
+        String login = "nonExistentUser";
+
+        when(userRepository.findByLogin(login)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> {
+            userService.archiveUser(login, 30);
+        });
+    }
+
+    @Test
+    void archiveUser_shouldThrowExceptionIfLastAdmin() {
+        String login = "lastAdmin";
+
+        RoleEntity roleEntity = new RoleEntity();
+        roleEntity.setName(RoleName.ADMIN);
+
+        UserEntity adminUser = new UserEntity();
+        adminUser.setLogin(login);
+        adminUser.setRoleEntity(roleEntity);
+
+        when(userRepository.findByLogin(login)).thenReturn(Optional.of(adminUser));
+        when(userRepository.countActiveAdmins()).thenReturn(1L); // Один активный администратор
+
+        assertThrows(IllegalStateException.class, () -> {
+            userService.archiveUser(login, 30);
+        });
+    }
 }
     

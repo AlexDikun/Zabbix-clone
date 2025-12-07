@@ -2,7 +2,6 @@ package su.dikunia.zabbix_clone.controllers.api;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -19,11 +18,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 import java.util.Optional;
 
@@ -91,6 +94,7 @@ public class UserControllerTest {
         manager.setRoleEntity(roleStaff);
         when(userRepository.findById(manager.getId())).thenReturn(Optional.of(manager));
         when(userRepository.findByLogin(testLogin)).thenReturn(Optional.of(manager));
+        doNothing().when(userService).archiveUser(testLogin, 30);
     }
 
     @Test
@@ -157,5 +161,27 @@ public class UserControllerTest {
             .param("newPassword", newPassword)
             .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden());
     }
-    
+
+    @Test
+    @WithMockUser(roles="ADMIN")
+    void archiveUser_shouldReturnSuccessMessage() throws Exception {
+        UserEntity manager = userRepository.findByLogin(testLogin).get();
+
+        mockMvc.perform(delete("/api/users/archive")
+                .param("login", manager.getLogin())
+                .param("retentionDays", "30"))
+            .andExpect(status().isOk())
+            .andExpect(content().string("Учатная запись " + testLogin + "была удалена!"));
+    }
+
+    @Test
+    @WithMockUser(roles="STAFF")
+    void staffArchiveUser_shouldReturnSuccessMessage() throws Exception {
+        UserEntity manager = userRepository.findByLogin(testLogin).get();
+
+        mockMvc.perform(delete("/api/users/archive")
+                .param("login", manager.getLogin())
+                .param("retentionDays", "30")
+          .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden());
+    }
 }

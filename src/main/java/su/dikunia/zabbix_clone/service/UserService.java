@@ -1,5 +1,6 @@
 package su.dikunia.zabbix_clone.service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,5 +69,21 @@ public class UserService {
             .orElseThrow(() -> new EntityNotFoundException("User not found!"));
         userEntity.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(userEntity);
+    }
+
+    @Transactional
+    public void archiveUser(String login, int retentionDays) {
+        UserEntity user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        if (user.getRoleEntity().getName() == RoleName.ADMIN) {
+            long activeAdminsCount = userRepository.countActiveAdmins();
+            if (activeAdminsCount <= 1) {
+                throw new IllegalStateException("Cannot delete the last admin account!");
+            }
+        }
+        
+        user.setDeleted(true);
+        user.setDeletedAt(LocalDateTime.now().plusDays(retentionDays));
+        userRepository.save(user);
     }
 }
