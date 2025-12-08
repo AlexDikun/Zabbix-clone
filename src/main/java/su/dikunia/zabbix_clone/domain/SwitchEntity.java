@@ -4,12 +4,15 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NonNull;
+import su.dikunia.zabbix_clone.enums.SwitchState;
 
 @Entity
 @Table(name = "switches")
@@ -36,8 +39,9 @@ public class SwitchEntity {
     @Column(name = "coordinates")
     private String coordinates;
     
-    @Column(name = "state")
-    private Boolean state;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "state", nullable = false)
+    private SwitchState state;
 
     @Column(name = "is_deleted", nullable = false)
     private boolean deleted = false;
@@ -46,3 +50,4 @@ public class SwitchEntity {
     private LocalDateTime deletedAt;
     
 }
+
