@@ -49,7 +49,7 @@ public class UserEntity {
     @JoinColumn(name = "role_id", nullable = false)
     private RoleEntity roleEntity;
 
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", nullable = false)
     private boolean deleted = false;
 
     @Column(name = "deleted_at")
