@@ -2,6 +2,10 @@ package su.dikunia.zabbix_clone.domain;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+import org.locationtech.jts.geom.Point;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -24,20 +28,21 @@ public class SwitchEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true, nullable = false)
     @NonNull
     private String name;
 
-    @Column(name = "model")
+    @Column(name = "model", nullable = false)
     @NonNull
     private String model;
     
-    @Column(name = "ip_address")
+    @Column(name = "ip_address", unique = true, nullable = false)
     @NonNull
     private String ipAddress;
 
-    @Column(name = "coordinates")
-    private String coordinates;
+    @Column(nullable = false)
+    @JdbcTypeCode(SqlTypes.GEOMETRY)
+    private Point coordinates;
     
     @Enumerated(EnumType.STRING)
     @Column(name = "state", nullable = false)
