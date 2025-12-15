@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import su.dikunia.zabbix_clone.domain.SwitchEntity;
 import su.dikunia.zabbix_clone.dto.SwitchCreateDTO;
 import su.dikunia.zabbix_clone.enums.SwitchState;
+import su.dikunia.zabbix_clone.exceptions.SwitchAlreadyExistsException;
 import su.dikunia.zabbix_clone.repos.SwitchRepository;
 
 @Service
@@ -23,6 +24,12 @@ public class SwitchService {
 
     @Transactional
     public SwitchCreateDTO createSwitch(SwitchCreateDTO switchCreateDTO) {
+        if (switchRepository.existsByName(switchCreateDTO.getName())) {
+            throw new SwitchAlreadyExistsException(
+                "Коммутатор с названием '" + switchCreateDTO.getName() + "' уже существует!"
+            );
+        }
+
         Point coordinates = geometryFactory.createPoint(
             new Coordinate(switchCreateDTO.getLongitude(), switchCreateDTO.getLatitude())
         );
