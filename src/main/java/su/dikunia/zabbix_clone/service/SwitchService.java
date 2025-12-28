@@ -34,7 +34,7 @@ public class SwitchService {
             new Coordinate(switchCreateDTO.getLongitude(), switchCreateDTO.getLatitude())
         );
 
-        SwitchEntity switchEntity = new SwitchEntity(null, null, null);
+        SwitchEntity switchEntity = new SwitchEntity();
         switchEntity.setName(switchCreateDTO.getName());
         switchEntity.setModel(switchCreateDTO.getModel());
         switchEntity.setIpAddress(switchCreateDTO.getIpAddress());
