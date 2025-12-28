@@ -15,7 +15,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
-import lombok.NonNull;
 import su.dikunia.zabbix_clone.enums.SwitchState;
 
 @Entity
@@ -29,19 +28,15 @@ public class SwitchEntity {
     private Long id;
 
     @Column(name = "name", unique = true, nullable = false)
-    @NonNull
     private String name;
 
     @Column(name = "model", nullable = false)
-    @NonNull
     private String model;
     
     @Column(name = "ip_address", unique = true, nullable = false)
-    @NonNull
     private String ipAddress;
 
-    @Column(nullable = false)
-    @JdbcTypeCode(SqlTypes.GEOMETRY)
+    @Column(columnDefinition = "geometry(Point, 4326)", nullable = false)
     private Point coordinates;
     
     @Enumerated(EnumType.STRING)
