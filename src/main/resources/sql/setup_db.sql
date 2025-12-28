@@ -4,6 +4,9 @@ DROP SCHEMA IF EXISTS public CASCADE;
 -- Создание новой схемы
 CREATE SCHEMA public;
 
+-- Установка PostGIS
+CREATE EXTENSION IF NOT EXISTS postgis;
+
 -- Назначение прав на схему
 GRANT USAGE ON SCHEMA public TO sysadmin;
 GRANT CREATE ON SCHEMA public TO sysadmin;
