@@ -14,6 +14,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import su.dikunia.zabbix_clone.enums.SwitchState;
 
@@ -36,6 +37,7 @@ public class SwitchEntity {
     @Column(name = "ip_address", unique = true, nullable = false)
     private String ipAddress;
 
+    @NotNull(message = "Coordinates must be specified")
     @Column(columnDefinition = "geometry(Point, 4326)", nullable = false)
     private Point coordinates;
     
