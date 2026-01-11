@@ -56,18 +56,18 @@ public class RoleEntityTests {
         assertThat(violations).isEmpty();
     }
 
-   @Test
-void testRoleEntityValidationWithNullName() {
-    System.out.println("Попытка создать роль с пустым именем!");
-    RoleEntity roleEntity = new RoleEntity();
-    roleEntity.setName(null);
-    Set<ConstraintViolation<RoleEntity>> violations = validator.validate(roleEntity);
+    @Test
+    void testRoleEntityValidationWithNullName() {
+        System.out.println("Попытка создать роль с пустым именем!");
+        RoleEntity roleEntity = new RoleEntity();
+        roleEntity.setName(null);
+        Set<ConstraintViolation<RoleEntity>> violations = validator.validate(roleEntity);
 
-    assertThat(violations).isNotEmpty();
-    assertThat(violations)
-        .extracting(ConstraintViolation::getMessage)
-        .contains("Role name must not be null"); 
-}
+        assertThat(violations).isNotEmpty();
+        assertThat(violations)
+            .extracting(ConstraintViolation::getMessage)
+            .contains("Role name must not be null"); 
+    }
 
     @Test
     public void testCreationTimestampWithMock() {
