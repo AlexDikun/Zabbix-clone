@@ -27,6 +27,22 @@ public class SwitchCreateDTO {
     @NotNull
     private Double longitude; 
 
+    public SwitchCreateDTO() {};
+
+    public SwitchCreateDTO(
+        String name,
+        String model,
+        String ipAddress,
+        Double latitude,
+        Double longitude
+    ) {
+        this.name = name;
+        this.model = model;
+        this.ipAddress = ipAddress;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    };
+
     public static SwitchCreateDTO fromEntity(SwitchEntity switchEntity) {
         SwitchCreateDTO dto = new SwitchCreateDTO();
         
