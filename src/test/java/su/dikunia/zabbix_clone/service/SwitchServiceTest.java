@@ -2,6 +2,7 @@ package su.dikunia.zabbix_clone.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -19,6 +20,7 @@ import org.mockito.MockitoAnnotations;
 
 import su.dikunia.zabbix_clone.domain.SwitchEntity;
 import su.dikunia.zabbix_clone.dto.SwitchCreateDTO;
+import su.dikunia.zabbix_clone.exceptions.SwitchAlreadyExistsException;
 import su.dikunia.zabbix_clone.repos.SwitchRepository;
 
 public class SwitchServiceTest {
@@ -53,7 +55,7 @@ public class SwitchServiceTest {
 
         SwitchCreateDTO dto = SwitchCreateDTO.fromEntity(newSwitchEntity);
 
-        when(switchRepository.existsByName("Elm Street")).thenReturn(false);
+        when(switchRepository.existsByName(name)).thenReturn(false);
         when(switchRepository.save(any(SwitchEntity.class))).thenReturn(newSwitchEntity);
        
         SwitchCreateDTO switchDTO = switchService.createSwitch(dto);
@@ -65,4 +67,41 @@ public class SwitchServiceTest {
         verify(switchRepository, times(1)).existsByName(name);
         verify(switchRepository, times(1)).save(any(SwitchEntity.class));
     }
+
+    @Test
+    public void testCreateSwitch_switchAlreadyExists() {
+        System.out.println("Сценарий: коммутатор уже существует!");
+
+        String name = "existingSwitch";
+        Long id = 62L;
+        String model = "ORION-228";
+        String ipAddress = "203.0.113.142";
+        Point coordinates = point(150.570892, -33.697978);
+
+        SwitchEntity existingSwitch = new SwitchEntity();
+        existingSwitch.setName(name);
+        existingSwitch.setCoordinates(coordinates);
+        existingSwitch.setId(id);
+        existingSwitch.setModel(model);
+        existingSwitch.setIpAddress(ipAddress);
+
+        SwitchCreateDTO dto = new SwitchCreateDTO();
+        dto.setId(id);
+        dto.setName(name);
+        dto.setModel(model);
+        dto.setIpAddress(ipAddress);
+        dto.setLongitude(150.570892);
+        dto.setLatitude(-33.697978);
+
+        when(switchRepository.existsByName(name)).thenReturn(true);
+
+        assertThrows(
+            SwitchAlreadyExistsException.class,
+            () -> switchService.createSwitch(dto),
+             "Ожидалось исключение SwitchAlreadyExistsException"
+        );;
+
+        verify(switchRepository, times(1)).existsByName(name);
+    }
+
 }
