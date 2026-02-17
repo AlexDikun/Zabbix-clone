@@ -86,6 +86,13 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
+            <version>42.7.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-spatial</artifactId>
+            <version>6.6.0.Final</version> <!-- или актуальная версия -->
         </dependency>
 
         <!-- Lombok -->
